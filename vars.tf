@@ -11,4 +11,4 @@ variable "port_no" {
   default = 5672
 }
 variable "instance_type" {}
-variable "bastion_cidr"{}
+variable "bastion_cidr" {}
