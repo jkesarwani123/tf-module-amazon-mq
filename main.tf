@@ -29,7 +29,7 @@ resource "aws_security_group" "main" {
   tags = merge(var.tags, { Name = "${var.name}-${var.env}-sg" })
 }
 # Create a simple instance for RabbitMQ
-resource "aws_instance" "web" {
+resource "aws_instance" "rabbitmq" {
   ami           = data.aws_ami.centos.id
   instance_type = var.instance_type
   subnet_id     = var.subnets[0]
@@ -44,6 +44,15 @@ resource "aws_instance" "web" {
     rabbitmq_appuser_password = data.aws_ssm_parameter.rabbitmq_appuser_password.value
   }))
 
+}
+
+# Create DNS record
+resource "aws_route53_record" "main" {
+  zone_id = var.domain_id
+  name    = "rabbitmq-${var.env}"
+  type    = "A"
+  ttl     = 30
+  records = [aws_instance.rabbitmq.private_ip]
 }
 
 #resource "aws_instance" "instance" {
